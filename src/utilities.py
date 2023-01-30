@@ -1,15 +1,27 @@
 import sympy
 import math
+import matplotlib.pyplot as plt
 
 def calcula_parametros(x1, y1, x2, y2, ri, d_arcos):
     '''
-    Inputs: x1, y1, x2, y2, ri, d_arcos
-    Incógnitas/Outputs: cxe, cye, cxi, cyi, ri
+    Inputs: 
+        Punto: (x1, y1)
+        Punto: (x2, y2) 
+        Radiio circunferencia interna: ri
+        Distáncia entre los arcos: d_arcos
+
+    Incógnitas/Outputs: 
+        Centro circunferencia externa: (cxe, cye)
+        Centro circunferencia interna: (cxi, cyi)
+        Radio circunferencia externa: re
+
     eq1 = Circunferencia externa pasa por punto 1
     eq2 = Circunferencia externa pasa por punto 2
     eq3 = Circunferencia interna pasa por punto 1
     eq4 = Circunferencia interna pasa por punto 2
     eq5 = Distancia entre los arcos (aunque supone que están alineados los centros)
+
+    Resuelve el sistema de ecuaciones cuadráticas siguiente para devolver los outputs necesarios para plottear las circunferencias.
     '''
     cxe, cye, cxi, cyi, re = sympy.symbols("cxe cye cxi cyi re", real=True)
 
@@ -40,12 +52,60 @@ def calcula_parametros(x1, y1, x2, y2, ri, d_arcos):
 
 def calcula_angulo(d_arcos, profundidad):
     '''
-    inputs: d_arcos: distáncia entre los arcos
-            profundidad: profundidad donde deben cortarse los arcos
+    inputs: 
+        d_arcos: distáncia entre los arcos
+        profundidad: profundidad donde deben cortarse los arcos
             
-    outputs: angulo_externo: ángulo de corte para la sección más externa
-             angulo_interno: ángulo de corte para la sección más interna (+ cercana centro ojo)
+    outputs: 
+        ángulo_externo: ángulo de corte para la sección más externa
+        ángulo_interno: ángulo de corte para la sección más interna (+ cercana centro ojo)
     '''
     angulo_externo = math.degrees(math.atan(profundidad/(d_arcos*0.5)))
     angulo_interno = 180 - angulo_externo
+
     return angulo_externo, angulo_interno
+
+
+def genera_grafico(x1, y1, x2, y2, cxe, cye, re, cxi, cyi, ri):
+    '''
+    inputs: 
+        Dos puntos en el espacio (x1, y1), (x2, y2)
+        Centro de la circunferencia externa (cxe, cye) y su radio re
+        Centro de la circunferencia interna (cxi, cyi) y su radio ri
+
+    output: fig: una figura de matplotlib que tiene ploteados los puntos (x1, y1), (x2, y2), la circunferencia externa, la circunferencia interna
+                 y la circunferencia de una córnea humana estándar
+    '''
+    plt.ioff()
+    fig, ax =  plt.subplots()
+    cm = 1/2.54 #Para convertir el tamaño
+    fig.set_size_inches(20*cm, 20*cm)
+    
+    radio_cornea = 12/2 #Tamaños estándar humanos en mm (radio)
+
+    cornea = plt.Circle((0, 0), radio_cornea, color='turquoise', fill=False)
+    corte_externo = plt.Circle((cxe, cye), re, color='red', fill=False, linewidth=0.2)
+    corte_interno = plt.Circle((cxi, cyi), ri, color='red', fill=False, linewidth=0.2)
+
+    ax.cla() # clear things for fresh plot
+
+    ax.set_aspect('equal') # Para que el gráfico sea cuadrado
+
+    # Cambiar el límite que se muestra
+    ax.set_xlim((-7, 7))
+    ax.set_ylim((-7, 7))
+
+    # Plot puntos
+    ax.plot((x1), (y1), 'o', color='coral')
+    ax.plot((x2), (y2), 'o', color='coral')
+
+    # Plot ejes
+    plt.axvline(x = 0, color = 'k', linewidth=0.5)
+    plt.axhline(y = 0, color = 'k', linewidth=0.5)
+
+    # Plot los círculos
+    ax.add_patch(cornea)
+    ax.add_patch(corte_externo)
+    ax.add_patch(corte_interno)
+    
+    return fig
