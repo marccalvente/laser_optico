@@ -2,15 +2,15 @@ from src import utilities
 import streamlit as st
 
 st.title("Calculadora de parámetros de láser")
-st.markdown("Todas las unidades deben introducirse en :red[milímetros]")
+st.markdown("Cada parámetro debe introducirse en las unidades indicadas")
 
-with st.expander("Introduzca puntos de corte y distáncia entre arcos", expanded=True):
-    x1 = st.number_input("Punto 1 - Coordenada X")
-    y1 = st.number_input("Punto 1 - Coordenada Y")
-    x2 = st.number_input("Punto 2 - Coordenada X")
-    y2 = st.number_input("Punto 2 - Coordenada Y")
-    d_arcos = st.number_input("Distáncia entre los arcos")
-    profundidad = st.number_input("Cutting depth")
+with st.expander("Introduzca los parámetros para el cálculo", expanded=True):
+    x1 = st.number_input("Punto 1 - Coordenada X (mm)")
+    y1 = st.number_input("Punto 1 - Coordenada Y (mm)")
+    x2 = st.number_input("Punto 2 - Coordenada X (mm)")
+    y2 = st.number_input("Punto 2 - Coordenada Y (mm)")
+    d_arcos = st.number_input("Distáncia entre los arcos (mm)")
+    profundidad = st.number_input("Cutting depth (µm)")
 
 ri = 3
 
@@ -19,7 +19,11 @@ boton_calcular = st.button("Calcular")
 
 if boton_calcular:
     cxe, cye, cxi, cyi, re = utilities.calcula_parametros(x1, y1, x2, y2, ri, d_arcos)
-    angulo_externo, angulo_interno = utilities.calcula_angulo(d_arcos, profundidad)
+    angulo_externo, angulo_interno = utilities.calcula_angulo(d_arcos, profundidad*1000)
+    longitud_arco_externo = utilities.calcula_longitud_arco(x1, y1, x2, y2, cxe, cye)
+    longitud_arco_interno = utilities.calcula_longitud_arco(x1, y1, x2, y2, cxi, cyi)
+    angulo_medio_externo = utilities.calcula_angulo_con_horizontal((x1+x2)/2, (y1+y2)/2, cxe, cye)
+    angulo_medio_interno = utilities.calcula_angulo_con_horizontal((x1+x2)/2, (y1+y2)/2, cxi, cyi)
 
     fig = utilities.genera_grafico(x1, y1, x2, y2, cxe, cye, re, cxi, cyi, ri)
 
@@ -28,17 +32,39 @@ if boton_calcular:
 st.text(" ")
 st.subheader("Parámetros para el primer corte")
 
-col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
-col1.metric("Centro (mm)", f"({round(cxe, 2)}, {round(cye, 2)})")
-col2.metric("Radio (mm)", f"{round(re, 3)}")
-col3.metric("Side cut angle (º)", f"{round(angulo_externo, 2)}")
-col4.metric("Cutting depth (µm)", f"{profundidad*1000}")
+with st.container():
+    col1, col2, col3 = st.columns([2, 2, 2])
+    col1.metric("Centro (mm)", f"({round(cxe, 2)}, {round(cye, 2)})")
+    col2.metric("Radio (mm)", f"{round(re, 3)}")
+    col3.metric("Arc center position (º)", f"{round(angulo_medio_externo, 2)}")
+    col1.metric("Arc length (º)", f"{round(longitud_arco_externo, 2)}")
+    col2.metric("Side cut angle (º)", f"{round(angulo_externo, 2)}")
+    col3.metric("Cutting depth (µm)", f"{profundidad}")
+
+    # col1, col2 = st.columns([2, 2])
+    # col1.metric("Centro (mm)", f"({round(cxe, 2)}, {round(cye, 2)})")
+    # col2.metric("Radio (mm)", f"{round(re, 3)}")
+    # col1.metric("Arc center position (º)", f"{round(angulo_medio_externo, 2)}")
+    # col2.metric("Arc length (º)", f"{round(longitud_arco_externo, 2)}")
+    # col1.metric("Side cut angle (º)", f"{round(angulo_externo, 2)}")
+    # col2.metric("Cutting depth (µm)", f"{profundidad}") 
 
 st.text(" ")
 st.subheader("Parámetros para el segundo corte")
 
-col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
-col1.metric("Centro (mm)", f"({round(cxi, 2)}, {round(cyi, 2)})")
-col2.metric("Radio (mm)", f"{round(ri, 3)}")
-col3.metric("Side cut angle (º)", f"{round(angulo_interno, 2)}")
-col4.metric("Cutting depth (µm)", f"{profundidad*1000}")
+with st.container():
+    col1, col2, col3 = st.columns([2, 2, 2])
+    col1.metric("Centro (mm)", f"({round(cxi, 2)}, {round(cyi, 2)})")
+    col2.metric("Radio (mm)", f"{round(ri, 3)}")
+    col3.metric("Arc center position (º)", f"{round(angulo_medio_interno, 2)}")
+    col1.metric("Arc length (º)", f"{round(longitud_arco_interno, 2)}")
+    col2.metric("Side cut angle (º)", f"{round(angulo_interno, 2)}")
+    col3.metric("Cutting depth (µm)", f"{profundidad}")
+
+    # col1, col2 = st.columns([2, 2])
+    # col1.metric("Centro (mm)", f"({round(cxi, 2)}, {round(cyi, 2)})")
+    # col2.metric("Radio (mm)", f"{round(ri, 3)}")
+    # col1.metric("Arc center position (º)", f"{round(angulo_medio_interno, 2)}")
+    # col2.metric("Arc length (º)", f"{round(longitud_arco_interno, 2)}")
+    # col1.metric("Side cut angle (º)", f"{round(angulo_interno, 2)}")
+    # col2.metric("Cutting depth (µm)", f"{profundidad}") 

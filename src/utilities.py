@@ -1,4 +1,5 @@
 import sympy
+import numpy as np
 import math
 import matplotlib.pyplot as plt
 
@@ -46,7 +47,7 @@ def calcula_parametros(x1, y1, x2, y2, ri, d_arcos):
 #     cxi = float(result[0][cxi].evalf())
 #     cyi = float(result[0][cyi].evalf())
 #     re = float(result[0][re].evalf())
-        
+       
     return cxe, cye, cxi, cyi, re
 
 
@@ -109,3 +110,38 @@ def genera_grafico(x1, y1, x2, y2, cxe, cye, re, cxi, cyi, ri):
     ax.add_patch(corte_interno)
     
     return fig
+
+
+def calcula_longitud_arco(x1, y1, x2, y2, cx, cy):
+    '''
+    inputs: 
+        Punto 1: x2, y1
+        Punto 2: x2, y2
+        Centro: cx, cy
+
+    outputs: angulo en grados
+
+    Calcula el ángulo que forman dos puntos respecto a un centro.
+    '''
+    P1 = [x1, y1]
+    P2 = [x2, y2]
+    C = [cx, cy]
+
+    angulo = 2*math.asin(math.dist(P1,P2)*0.5/(math.dist(C,P1)))
+
+    return math.degrees(angulo)
+
+    
+def calcula_angulo_con_horizontal(x, y, cx, cy):
+    '''
+    input: 
+        coordenadas cartesianas(x, y)
+        centro de coordenadas (cx, cy)
+    output: ángulo que forma con la horizontal en grados (º)
+
+    Calcula el ángulo que forma la coordenada cartesiana con la horizontal (con el 0 situado a las 9h, a la izquierda)
+    '''
+    phi = np.arctan2(y-cy, x-cx)
+    angulo_grados = math.degrees(phi)
+    angulo_resultado = (angulo_grados+180)%360
+    return angulo_resultado
