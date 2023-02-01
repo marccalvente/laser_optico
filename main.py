@@ -19,7 +19,7 @@ boton_calcular = st.button("Calcular")
 
 if boton_calcular:
     cxe, cye, cxi, cyi, re = utilities.calcula_parametros(x1, y1, x2, y2, ri, d_arcos)
-    angulo_externo, angulo_interno = utilities.calcula_angulo(d_arcos, profundidad*1000)
+    angulo_externo, angulo_interno = utilities.calcula_angulo(d_arcos, profundidad*0.001)
     longitud_arco_externo = utilities.calcula_longitud_arco(x1, y1, x2, y2, cxe, cye)
     longitud_arco_interno = utilities.calcula_longitud_arco(x1, y1, x2, y2, cxi, cyi)
     angulo_medio_externo = utilities.calcula_angulo_con_horizontal((x1+x2)/2, (y1+y2)/2, cxe, cye)
