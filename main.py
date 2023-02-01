@@ -1,7 +1,7 @@
 from src import utilities
 import streamlit as st
 
-st.title("Calculadora de parámetros de láser")
+st.title("Calculadora Victus Femtosecond")
 st.markdown("Cada parámetro debe introducirse en las unidades indicadas")
 
 with st.expander("Introduzca los parámetros para el cálculo", expanded=True):
