@@ -9,7 +9,7 @@ with st.expander("Introduzca los parámetros para el cálculo", expanded=True):
     y1 = st.number_input("Punto 1 - Coordenada Y (mm)")
     x2 = st.number_input("Punto 2 - Coordenada X (mm)")
     y2 = st.number_input("Punto 2 - Coordenada Y (mm)")
-    d_arcos = st.number_input("Distáncia entre los arcos (mm)")
+    d_arcos = st.number_input("Distancia entre los arcos (mm)")
     profundidad = st.number_input("Cutting depth (µm)")
 
 ri = 3
